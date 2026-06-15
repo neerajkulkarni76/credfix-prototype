@@ -5,6 +5,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Colors from '@/constants/Colors'
 import { userProfile, lenderEmails } from '@/data/mockData'
 import { useOnboardingStore } from '@/stores/onboardingStore'
@@ -92,6 +93,8 @@ export default function HomeScreen() {
   const neytraActivated = useNeytraStore((s) => s.activated)
   const gmailActivated = useGmailStore((s) => s.activated)
   const fdActivated = useFDStore((s) => s.activated)
+  const fdDeposits = useFDStore((s) => s.deposits)
+  const fdBalance = fdDeposits.reduce((sum, d) => sum + d.amount, 0)
   const firstName = enteredFirst || userProfile.firstName
 
   // One-time ring highlight animation for email icon
@@ -221,25 +224,25 @@ export default function HomeScreen() {
             activeOpacity={0.8}
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/savings-screens'); }}
           >
+            <View style={s.fdHeader}>
+              <MaterialCommunityIcons name="cash-multiple" size={14} color={Colors.ctaGreen} />
+              <Text style={s.fdHeaderLabel} numberOfLines={1}>LOAN CLOSURE FUND</Text>
+              <FontAwesome name="chevron-right" size={8} color={Colors.textMuted} />
+            </View>
             {fdActivated ? (
               <>
-                <Text style={s.widgetSmallLabel}>FD BALANCE</Text>
-                <Text style={s.widgetBigValue}>₹8,400</Text>
-                <Text style={s.widgetSubValue}>of ₹50,000 goal</Text>
+                <Text style={s.widgetBigValue}>₹{fdBalance.toLocaleString('en-IN')}</Text>
+                <Text style={s.widgetSubValue}>{fdDeposits.length} FD{fdDeposits.length !== 1 ? 's' : ''} active</Text>
                 <View style={s.widgetBtn}>
                   <Text style={s.widgetBtnText}>+ Deposit More</Text>
                 </View>
               </>
             ) : (
               <>
-                <View style={s.fdActivateIcon}>
-                  <FontAwesome name="bank" size={16} color={Colors.primary} />
-                </View>
-                <Text style={[s.widgetSmallLabel, { marginTop: 8 }]}>SAVINGS</Text>
-                <Text style={s.fdActivateTitle}>Start your FD</Text>
+                <Text style={s.fdActivateTitle}>Start building</Text>
                 <Text style={s.fdActivateDesc}>Save & earn 7.5% p.a.</Text>
                 <View style={s.fdActivateBtn}>
-                  <Text style={s.fdActivateBtnText}>Start Saving →</Text>
+                  <Text style={s.fdActivateBtnText}>Start →</Text>
                 </View>
               </>
             )}
@@ -267,15 +270,35 @@ export default function HomeScreen() {
               </>
             ) : (
               <>
-                <Text style={[s.neytraBigValue, { fontSize: 18 }]}>AI Protection</Text>
-                <Text style={s.neytraSubValue}>For recovery calls</Text>
-                <View style={[s.neytraLive, { backgroundColor: Colors.primary }]}>
-                  <Text style={[s.neytraLiveText, { color: Colors.white }]}>ACTIVATE</Text>
+                <Text style={s.fdActivateTitle}>AI Protection</Text>
+                <Text style={s.fdActivateDesc}>For recovery calls</Text>
+                <View style={s.fdActivateBtn}>
+                  <Text style={s.fdActivateBtnText}>Activate →</Text>
                 </View>
               </>
             )}
           </TouchableOpacity>
         </View>
+
+        {/* ── Gmail banner — if not activated ── */}
+        {!gmailActivated && (
+          <TouchableOpacity
+            style={s.gmailBanner}
+            activeOpacity={0.85}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/gmail-screens'); }}
+          >
+            <View style={s.gmailBannerIcon}>
+              <FontAwesome name="envelope" size={16} color={Colors.primary} />
+            </View>
+            <View style={s.gmailBannerText}>
+              <Text style={s.gmailBannerTitle}>Never miss a lender email</Text>
+              <Text style={s.gmailBannerDesc}>Connect Gmail to auto-track notices, offers & reminders</Text>
+            </View>
+            <View style={s.gmailBannerArrow}>
+              <FontAwesome name="chevron-right" size={10} color={Colors.primary} />
+            </View>
+          </TouchableOpacity>
+        )}
 
         {/* ── Needs Attention ── */}
         <View style={s.sectionRow}>
@@ -285,7 +308,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Bajaj Finance — conversational card */}
+        {/* Bajaj Finance — lender offer card */}
         <TouchableOpacity
           style={s.actionCard}
           activeOpacity={0.85}
@@ -294,49 +317,53 @@ export default function HomeScreen() {
           <View style={s.actionHeader}>
             <View style={s.actionLogoRow}>
               <View style={s.actionLogo}>
-                <FontAwesome name="circle" size={16} color={Colors.textPrimary} />
+                <FontAwesome name="university" size={15} color={Colors.primary} />
               </View>
               <View>
-                <Text style={s.actionBankName}>Bajaj Finance</Text>
-                <Text style={s.actionBankSub}>Settlement ready to approve</Text>
+                <Text style={s.actionBankName}>Bajaj Finserv</Text>
+                <Text style={s.actionBankSub}>Lender responded with offer</Text>
               </View>
             </View>
             <View style={s.savePill}>
-              <Text style={s.savePillText}>Save ₹22,000</Text>
+              <Text style={s.savePillText}>Save ₹36,200</Text>
             </View>
           </View>
 
           <View style={s.actionBody}>
             <Text style={s.actionBodyText}>
-              I got them down to <Text style={s.bold}>₹28,000</Text> from ₹50,000.{'\n'}Approve it and I'll lock the deal in writing.
+              Bajaj offered <Text style={s.bold}>₹50,000</Text> to settle your ₹86,200 loan. That's a 42% discount. Review and decide — accept or I can negotiate further.
             </Text>
           </View>
 
           <View style={s.actionCta}>
-            <Text style={s.actionCtaText}>Review & Approve</Text>
+            <Text style={s.actionCtaText}>Review Offer</Text>
             <View style={s.actionCtaArrow}>
               <FontAwesome name="arrow-right" size={11} color={Colors.white} />
             </View>
           </View>
         </TouchableOpacity>
 
-        {/* HDFC — compact */}
+        {/* HDFC — legal notice card */}
         <TouchableOpacity
-          style={s.compactCard}
+          style={s.legalCard}
           activeOpacity={0.85}
           onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); router.push('/chat/legal'); }}
         >
-          <View style={s.compactLeft}>
-            <View style={s.actionLogo}>
-              <FontAwesome name="circle" size={16} color={Colors.textPrimary} />
+          <View style={s.legalAccent} />
+          <View style={s.legalContent}>
+            <View style={s.legalTopRow}>
+              <View style={s.legalLogoWrap}>
+                <FontAwesome name="university" size={14} color={Colors.alert} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.compactBank}>HDFC Bank</Text>
+                <Text style={s.compactSub}>Sec 25 — Recovery Notice</Text>
+              </View>
+              <View style={s.deadlinePill}>
+                <Text style={s.deadlinePillText}>4 days left</Text>
+              </View>
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.compactBank}>HDFC</Text>
-              <Text style={s.compactSub}>Legal notice — reply due</Text>
-            </View>
-          </View>
-          <View style={s.deadlinePill}>
-            <Text style={s.deadlinePillText}>4 days left</Text>
+            <Text style={s.legalAction}>Your reply is needed — Risi has a draft ready</Text>
           </View>
         </TouchableOpacity>
 
@@ -491,7 +518,23 @@ const s = StyleSheet.create({
   risiFooterDot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: '#C8BEE8' },
 
   // ── Widgets
-  widgetRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  widgetRow: { flexDirection: 'row', gap: 12, marginBottom: 14 },
+  gmailBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#F0EDFF', borderRadius: 16, padding: 14, marginBottom: 20,
+    borderWidth: 1, borderColor: '#DDD8FF',
+  },
+  gmailBannerIcon: {
+    width: 36, height: 36, borderRadius: 18, backgroundColor: '#FFFFFF',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  gmailBannerText: { flex: 1 },
+  gmailBannerTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary },
+  gmailBannerDesc: { fontSize: 11, color: '#8B7FCC', marginTop: 2 },
+  gmailBannerArrow: {
+    width: 28, height: 28, borderRadius: 14, backgroundColor: '#FFFFFF',
+    justifyContent: 'center', alignItems: 'center',
+  },
   widgetLeft: {
     flex: 1, backgroundColor: '#F9FAFB', borderRadius: 18, padding: 16,
     borderWidth: 1, borderColor: '#F3F4F6',
@@ -504,12 +547,10 @@ const s = StyleSheet.create({
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8,
   },
   widgetBtnText: { fontSize: 12, fontWeight: '600', color: Colors.ctaGreen },
-  fdActivateIcon: {
-    width: 36, height: 36, borderRadius: 18, backgroundColor: '#F0EDFF',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  fdActivateTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginTop: 4 },
-  fdActivateDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 2, marginBottom: 10 },
+  fdHeader: { flexDirection: 'row', alignItems: 'center', gap: 3, height: 22, marginBottom: 10 },
+  fdHeaderLabel: { fontSize: 8, fontWeight: '700', color: Colors.textMuted, letterSpacing: 0.2, flex: 1 },
+  fdActivateTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, lineHeight: 20 },
+  fdActivateDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 2, marginBottom: 10, lineHeight: 14 },
   fdActivateBtn: {
     alignSelf: 'flex-start', backgroundColor: Colors.primary, borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 8,
@@ -519,8 +560,8 @@ const s = StyleSheet.create({
     flex: 1, backgroundColor: '#F9FAFB', borderRadius: 18, padding: 16,
     borderWidth: 1, borderColor: '#F3F4F6',
   },
-  neytraHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 },
-  neytraIcon: { width: 22, height: 22, borderRadius: 5 },
+  neytraHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 22, marginBottom: 10 },
+  neytraIcon: { width: 18, height: 18, borderRadius: 4 },
   neytraLabel: { fontSize: 11, fontWeight: '600', color: Colors.textMuted, letterSpacing: 0.5 },
   neytraBigValue: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary },
   neytraSubValue: { fontSize: 12, color: Colors.textMuted, marginTop: 2, marginBottom: 10 },
@@ -538,8 +579,8 @@ const s = StyleSheet.create({
 
   // ── Action card — conversational
   actionCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 20, marginBottom: 12,
-    borderWidth: 1.5, borderColor: '#F0F0F5',
+    backgroundColor: '#FAFFF9', borderRadius: 20, padding: 20, marginBottom: 12,
+    borderWidth: 1.5, borderColor: '#E2F5E0',
   },
   actionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   actionLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -565,22 +606,28 @@ const s = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
 
-  // ── Compact card
-  compactCard: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF', borderRadius: 18, padding: 16, marginBottom: 12,
-    borderWidth: 1.5, borderColor: '#F0F0F5',
+  // ── Legal card
+  legalCard: {
+    flexDirection: 'row', backgroundColor: '#FFFBFA', borderRadius: 18,
+    marginBottom: 12, borderWidth: 1.5, borderColor: '#FDE8E4', overflow: 'hidden' as const,
   },
-  compactLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  legalAccent: { width: 4, backgroundColor: Colors.alert },
+  legalContent: { flex: 1, padding: 16 },
+  legalTopRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  legalLogoWrap: {
+    width: 36, height: 36, borderRadius: 18, backgroundColor: '#FEF2F2',
+    justifyContent: 'center', alignItems: 'center',
+  },
   compactBank: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary },
-  compactSub: { fontSize: 12, color: Colors.textMuted, marginTop: 1 },
+  compactSub: { fontSize: 11, color: Colors.textMuted, marginTop: 1 },
   deadlinePill: { backgroundColor: '#FEF2F2', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
   deadlinePillText: { fontSize: 11, fontWeight: '600', color: Colors.alert },
+  legalAction: { fontSize: 12, color: Colors.textSecondary, marginTop: 10, fontWeight: '500' },
 
   // ── Credit — empathetic
   creditCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 20, padding: 18, marginBottom: 16,
-    borderWidth: 1.5, borderColor: '#F0F0F5',
+    backgroundColor: '#FAFAFF', borderRadius: 20, padding: 18, marginBottom: 16,
+    borderWidth: 1.5, borderColor: '#E8E6FF',
   },
   creditTop: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 14 },
   creditScoreWrap: { alignItems: 'center' },
@@ -595,7 +642,7 @@ const s = StyleSheet.create({
   scoreRingFill: {
     position: 'absolute' as const, width: 64, height: 64, borderRadius: 32,
     borderWidth: 5, borderColor: 'transparent',
-    borderTopColor: '#4A3AFF', borderRightColor: '#4A3AFF', borderBottomColor: '#8B7FCC',
+    borderTopColor: '#4A3AFF', borderRightColor: '#4A3AFF',
     transform: [{ rotate: '-45deg' }],
   },
   scoreRingInner: {

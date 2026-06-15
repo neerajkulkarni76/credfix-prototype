@@ -113,9 +113,13 @@ export default function LandingScreen() {
         <TouchableOpacity
           style={[styles.actionBtn, { backgroundColor: landing.headerBg }]}
           onPress={() => {
-            if (type === 'neytra') router.replace('/neytra-screens/activate');
-            else if (type === 'legal') router.replace('/chat/legal');
-            else router.replace('/chat/settlement');
+            if (type === 'neytra') {
+              router.replace('/neytra-screens/activate');
+            } else if (type === 'legal') {
+              router.replace({ pathname: '/chat/new', params: { preselect: 'legal' } } as any)
+            } else {
+              router.replace({ pathname: '/chat/new', params: { preselect: 'settlement' } } as any)
+            }
           }} activeOpacity={0.8}
         >
           <Text style={styles.actionBtnText}>{landing.ctaLabel}</Text>

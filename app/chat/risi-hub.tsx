@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -7,15 +7,32 @@ import Colors from '@/constants/Colors'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { useConversationStore, Conversation } from '@/stores/conversationStore'
+import { useOnboardingStore } from '@/stores/onboardingStore'
+import { userProfile } from '@/data/mockData'
 
 export default function RisiHubScreen() {
   const router = useRouter()
   const conversations = useConversationStore((s) => s.conversations)
+  const enteredFirst = useOnboardingStore((s) => s.firstName)
+  const firstName = enteredFirst || userProfile.firstName
+
+  const openThread = (path: string) => {
+    if (path.startsWith('chat/thread?')) {
+      const params: Record<string, string> = {}
+      path.split('?')[1]?.split('&').forEach((p) => {
+        const [k, v] = p.split('=')
+        params[k] = decodeURIComponent(v)
+      })
+      router.push({ pathname: '/chat/thread', params } as any)
+    } else {
+      router.push(`/${path}` as any)
+    }
+  }
 
   const renderConversation = ({ item }: { item: Conversation }) => (
     <Card
       style={styles.conversationCard}
-      onPress={() => router.push(`/${item.path}` as any)}
+      onPress={() => openThread(item.path)}
     >
       <View style={styles.cardRow}>
         <View style={styles.iconCircle}>
@@ -58,11 +75,11 @@ export default function RisiHubScreen() {
               {/* Greeting Card */}
               <Card style={styles.greetingCard}>
                 <View style={styles.greetingRow}>
-                  <View style={styles.credFixIcon}>
-                    <Text style={styles.credFixText}>C+</Text>
+                  <View style={styles.risiLogoWrap}>
+                    <Image source={require('@/assets/risi-nav.png')} style={styles.risiLogo} resizeMode="contain" />
                   </View>
                   <View style={styles.greetingTextWrap}>
-                    <Text style={styles.greetingTitle}>Hey Sunil {'👋'}</Text>
+                    <Text style={styles.greetingTitle}>Hey {firstName} {'👋'}</Text>
                     <Text style={styles.greetingSubtitle}>
                       I'm Risi, your AI-powered financial companion. Let me help you take control of your debt.
                     </Text>
@@ -102,11 +119,8 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: 16, paddingBottom: 32 },
   greetingCard: { marginBottom: 16, backgroundColor: Colors.primaryLight },
   greetingRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
-  credFixIcon: {
-    width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.primary,
-    justifyContent: 'center', alignItems: 'center',
-  },
-  credFixText: { color: Colors.white, fontSize: 16, fontWeight: '700' },
+  risiLogoWrap: { width: 44, height: 44, borderRadius: 22, overflow: 'hidden' },
+  risiLogo: { width: 44, height: 44, borderRadius: 22 },
   greetingTextWrap: { flex: 1 },
   greetingTitle: { fontSize: 18, fontWeight: '700', color: Colors.textPrimary, marginBottom: 4 },
   greetingSubtitle: { fontSize: 13, color: Colors.textSecondary, lineHeight: 19 },

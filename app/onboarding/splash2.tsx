@@ -247,7 +247,7 @@ export default function Splash2() {
       <LegalAnimation />
 
       <Text style={styles.tagline}>
-        We will <Text style={styles.highlight}>respond & guide you{'\n'}on all legal notices</Text>
+        We will <Text style={styles.highlight}>guide you on all legal notices</Text>
       </Text>
 
       <View style={styles.dots}>

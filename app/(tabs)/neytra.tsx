@@ -406,30 +406,7 @@ export default function NeytraTabScreen() {
           </View>
         )}
 
-        {/* Quick actions */}
-        <View style={styles.quickActions}>
-          <TouchableOpacity style={styles.quickBtn} activeOpacity={0.7}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/neytra-screens/history'); }}>
-            <View style={[styles.quickIcon, { backgroundColor: '#EEF2FF' }]}>
-              <FontAwesome name="history" size={16} color={Colors.primary} />
-            </View>
-            <Text style={styles.quickLabel}>Call History</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickBtn} activeOpacity={0.7}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/neytra-screens/insights'); }}>
-            <View style={[styles.quickIcon, { backgroundColor: '#FFF7ED' }]}>
-              <FontAwesome name="bar-chart" size={16} color={Colors.alertOrange} />
-            </View>
-            <Text style={styles.quickLabel}>Call Insights</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickBtn} activeOpacity={0.7}
-            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-            <View style={[styles.quickIcon, { backgroundColor: '#F0FDF4' }]}>
-              <FontAwesome name="user-plus" size={16} color={Colors.ctaGreen} />
-            </View>
-            <Text style={styles.quickLabel}>Whitelist</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={{ height: 20 }} />
       </Animated.View>
     </ScrollView>
   )
@@ -461,7 +438,7 @@ const styles = StyleSheet.create({
   statIconWrap: { width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 6 },
   statValue: { fontSize: 26, fontWeight: '800', color: Colors.white, marginBottom: 2 },
   statLabel: { fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
-  content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 110 },
+  content: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 },
 
   // Welcome
   welcomeCard: {

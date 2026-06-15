@@ -9,7 +9,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome'
 import Colors from '@/constants/Colors'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { fdList } from '@/data/mockData'
 import { useFDStore } from '@/stores/fdStore'
 import * as Haptics from 'expo-haptics'
 
@@ -119,17 +118,13 @@ function ActivateFDView({ onActivate }: { onActivate: () => void }) {
 export default function FixedDepositsScreen() {
   const router = useRouter()
   const { bookNew } = useLocalSearchParams<{ bookNew?: string }>()
-  const { activated, setActivated } = useFDStore()
+  const { activated, deposits, addDeposit } = useFDStore()
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('All')
   const [showModal, setShowModal] = useState(activated && bookNew === '1')
   const [fdAmount, setFdAmount] = useState('')
 
-  const filteredFDs = activeTab === 'All'
-    ? fdList
-    : fdList.filter((fd) => fd.status === activeTab)
-
-  const totalInvested = fdList.reduce((sum, fd) => sum + fd.amount, 0)
-  const totalGains = 2800
+  const totalInvested = deposits.reduce((sum, fd) => sum + fd.amount, 0)
+  const totalGains = Math.round(totalInvested * 0.075 * (30 / 365)) // ~1 month of interest estimate
   const totalSavings = totalInvested + totalGains
 
   const handleActivate = () => {
@@ -138,8 +133,9 @@ export default function FixedDepositsScreen() {
   }
 
   const handleConfirmFD = () => {
+    if (!fdAmount) return
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-    setActivated(true)
+    addDeposit(Number(fdAmount))
     setShowModal(false)
     setFdAmount('')
   }
@@ -148,7 +144,7 @@ export default function FixedDepositsScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <TouchableOpacity onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
             <FontAwesome name="arrow-left" size={18} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Savings</Text>
@@ -222,7 +218,7 @@ export default function FixedDepositsScreen() {
     <SafeAreaView style={styles.safe}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => router.replace('/(tabs)')} style={styles.backBtn}>
           <FontAwesome name="arrow-left" size={18} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Fixed Deposits</Text>
@@ -254,38 +250,30 @@ export default function FixedDepositsScreen() {
           <View style={styles.promptRow}>
             <FontAwesome name="info-circle" size={16} color={Colors.primary} />
             <Text style={styles.promptText}>
-              Save ₹15,500 more to settle your HDFC loan and become debt-free faster.
+              Keep saving to settle your loans and become debt-free faster.
             </Text>
           </View>
         </Card>
 
-        {/* Tabs */}
-        <View style={styles.tabs}>
-          {TABS.map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              style={[styles.tab, activeTab === tab && styles.tabActive]}
-              onPress={() => setActiveTab(tab)}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
-            </TouchableOpacity>
-          ))}
+        {/* FD List header */}
+        <View style={styles.fdListHeader}>
+          <Text style={styles.fdListTitle}>Your Fixed Deposits</Text>
+          <Text style={styles.fdListCount}>{deposits.length} FD{deposits.length !== 1 ? 's' : ''}</Text>
         </View>
 
-        {/* FD List */}
-        {filteredFDs.map((fd) => (
-          <Card key={fd.id} style={styles.fdCard}>
+        {/* FD List — user's actual deposits */}
+        {deposits.map((fd, i) => (
+          <Card key={i} style={styles.fdCard}>
             <View style={styles.fdTop}>
               <View>
                 <Text style={styles.fdAmount}>₹{fd.amount.toLocaleString('en-IN')}</Text>
                 <Text style={styles.fdDate}>{fd.date}</Text>
               </View>
-              <Badge status={fd.status} />
+              <Badge status="Active" />
             </View>
             <View style={styles.fdMeta}>
               <Text style={styles.fdRate}>{fd.interestRate}% p.a.</Text>
-              <Text style={styles.fdDays}>{fd.daysRemaining} days remaining</Text>
+              <Text style={styles.fdDays}>12 months tenure</Text>
             </View>
           </Card>
         ))}
@@ -341,7 +329,7 @@ export default function FixedDepositsScreen() {
             <TouchableOpacity
               style={[styles.confirmBtn, !fdAmount && styles.confirmBtnDisabled]}
               activeOpacity={0.8}
-              onPress={() => { setShowModal(false); setFdAmount('') }}
+              onPress={() => { if (fdAmount) { addDeposit(Number(fdAmount)); setShowModal(false); setFdAmount(''); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } }}
               disabled={!fdAmount}
             >
               <Text style={styles.confirmBtnText}>Confirm FD</Text>
@@ -425,6 +413,9 @@ const styles = StyleSheet.create({
   fdMeta: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   fdRate: { fontSize: 12, color: Colors.textSecondary, fontWeight: '500' },
   fdDays: { fontSize: 12, color: Colors.textMuted },
+  fdListHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 },
+  fdListTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary },
+  fdListCount: { fontSize: 12, color: Colors.textMuted },
 
   // Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },

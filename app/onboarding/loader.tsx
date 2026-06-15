@@ -221,7 +221,7 @@ export default function LoaderScreen() {
   const phases = [
     { text: 'Breathe in' },
     { text: 'You are in the right place' },
-    { text: "Let's resolve your loan\nrelated issues together" },
+    { text: "Let's find a way through\nyour loans, together" },
   ];
 
   const showText = (index: number) => {

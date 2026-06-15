@@ -140,7 +140,7 @@ export default function ScoreImprovementChat() {
     <SafeAreaView style={s.safe}>
       {/* Header */}
       <View style={s.header}>
-        <TouchableOpacity onPress={() => router.replace('/(tabs)')} style={s.backBtn}>
+        <TouchableOpacity onPress={() => router.replace('/chat/risi-hub')} style={s.backBtn}>
           <FontAwesome name="arrow-left" size={18} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Score Improvement</Text>

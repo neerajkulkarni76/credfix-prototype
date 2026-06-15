@@ -103,10 +103,10 @@ export default function TabLayout() {
         name="neytra"
         options={{
           title: 'Neytra',
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({ color }) => (
             <Image
               source={require('@/assets/neytra-tab.png')}
-              style={[styles.neytraTab, { opacity: focused ? 1 : 0.3 }]}
+              style={[styles.neytraTab, { tintColor: color }]}
               resizeMode="contain"
             />
           ),
@@ -184,6 +184,6 @@ const styles = StyleSheet.create({
     width: FAB_SIZE, height: FAB_SIZE,
   },
   neytraTab: {
-    width: 24, height: 24, borderRadius: 6, marginBottom: -2,
+    width: 20, height: 20, borderRadius: 4, marginBottom: -2,
   },
 })

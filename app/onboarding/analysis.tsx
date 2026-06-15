@@ -416,9 +416,13 @@ export default function AnalysisScreen() {
           <Animated.View style={[styles.ctaWrap, { opacity: ctaFade }]}>
             <TouchableOpacity style={styles.cta} onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              if (cta.type === 'neytra') router.replace('/neytra-screens/activate');
-              else if (cta.type === 'legal') router.replace('/chat/legal');
-              else router.replace('/chat/settlement');
+              if (cta.type === 'neytra') {
+                router.replace('/neytra-screens/activate');
+              } else if (cta.type === 'legal') {
+                router.replace({ pathname: '/chat/new', params: { preselect: 'legal' } } as any)
+              } else {
+                router.replace({ pathname: '/chat/new', params: { preselect: 'settlement' } } as any)
+              }
             }} activeOpacity={0.8}>
               <Text style={styles.ctaText}>{cta.text}</Text>
               <FontAwesome name="arrow-right" size={14} color={Colors.white} style={{ marginLeft: 8 }} />
