@@ -129,7 +129,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="savings"
         options={{
-          title: 'Savings',
+          title: 'Funds',
           tabBarIcon: ({ color }) => <MaterialCommunityIcons name="piggy-bank-outline" size={22} color={color} style={{ marginBottom: -2 }} />,
         }}
       />
