@@ -177,8 +177,8 @@ export default function GmailInboxScreen() {
 
   const handleActivate = () => {
     Alert.alert(
-      'Allow CredFix to access Gmail?',
-      'CredFix will only read loan-related emails from banks and lenders. Personal emails are never accessed.',
+      'Allow Credfix to access Gmail?',
+      'Credfix will only read loan-related emails from banks and lenders. Personal emails are never accessed.',
       [
         { text: 'Cancel', style: 'cancel' },
         {

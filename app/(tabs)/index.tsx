@@ -10,6 +10,7 @@ import { userProfile, lenderEmails } from '@/data/mockData'
 import { useOnboardingStore } from '@/stores/onboardingStore'
 import { useNeytraStore } from '@/stores/neytraStore'
 import { useGmailStore } from '@/stores/gmailStore'
+import { useFDStore } from '@/stores/fdStore'
 import * as Haptics from 'expo-haptics'
 
 const { width } = Dimensions.get('window')
@@ -90,6 +91,7 @@ export default function HomeScreen() {
   const { firstName: enteredFirst, lastName: enteredLast } = useOnboardingStore()
   const neytraActivated = useNeytraStore((s) => s.activated)
   const gmailActivated = useGmailStore((s) => s.activated)
+  const fdActivated = useFDStore((s) => s.activated)
   const firstName = enteredFirst || userProfile.firstName
 
   // One-time ring highlight animation for email icon
@@ -213,18 +215,34 @@ export default function HomeScreen() {
 
         {/* ── Widgets row ── */}
         <View style={s.widgetRow}>
-          {/* FD Balance */}
+          {/* FD Balance / Activate */}
           <TouchableOpacity
             style={s.widgetLeft}
             activeOpacity={0.8}
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); router.push('/savings-screens'); }}
           >
-            <Text style={s.widgetSmallLabel}>FD BALANCE</Text>
-            <Text style={s.widgetBigValue}>₹8,400</Text>
-            <Text style={s.widgetSubValue}>of ₹50,000 goal</Text>
-            <TouchableOpacity style={s.widgetBtn} activeOpacity={0.7}>
-              <Text style={s.widgetBtnText}>+ Deposit More</Text>
-            </TouchableOpacity>
+            {fdActivated ? (
+              <>
+                <Text style={s.widgetSmallLabel}>FD BALANCE</Text>
+                <Text style={s.widgetBigValue}>₹8,400</Text>
+                <Text style={s.widgetSubValue}>of ₹50,000 goal</Text>
+                <View style={s.widgetBtn}>
+                  <Text style={s.widgetBtnText}>+ Deposit More</Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={s.fdActivateIcon}>
+                  <FontAwesome name="bank" size={16} color={Colors.primary} />
+                </View>
+                <Text style={[s.widgetSmallLabel, { marginTop: 8 }]}>SAVINGS</Text>
+                <Text style={s.fdActivateTitle}>Start your FD</Text>
+                <Text style={s.fdActivateDesc}>Save & earn 7.5% p.a.</Text>
+                <View style={s.fdActivateBtn}>
+                  <Text style={s.fdActivateBtnText}>Start Saving →</Text>
+                </View>
+              </>
+            )}
           </TouchableOpacity>
 
           {/* Neytra */}
@@ -330,7 +348,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={s.creditCard}
           activeOpacity={0.85}
-          onPress={() => router.push('/chat/risi-hub')}
+          onPress={() => router.push('/chat/score-improvement')}
         >
           <View style={s.creditTop}>
             <View style={s.creditScoreWrap}>
@@ -380,7 +398,7 @@ export default function HomeScreen() {
           <Text style={s.footerText}>256-bit encrypted · RBI compliant</Text>
         </View>
 
-        <View style={{ height: 90 }} />
+        <View style={{ height: 20 }} />
       </ScrollView>
     </SafeAreaView>
   )
@@ -486,6 +504,17 @@ const s = StyleSheet.create({
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8,
   },
   widgetBtnText: { fontSize: 12, fontWeight: '600', color: Colors.ctaGreen },
+  fdActivateIcon: {
+    width: 36, height: 36, borderRadius: 18, backgroundColor: '#F0EDFF',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  fdActivateTitle: { fontSize: 16, fontWeight: '700', color: Colors.textPrimary, marginTop: 4 },
+  fdActivateDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 2, marginBottom: 10 },
+  fdActivateBtn: {
+    alignSelf: 'flex-start', backgroundColor: Colors.primary, borderRadius: 10,
+    paddingHorizontal: 14, paddingVertical: 8,
+  },
+  fdActivateBtnText: { fontSize: 12, fontWeight: '600', color: Colors.white },
   widgetRight: {
     flex: 1, backgroundColor: '#F9FAFB', borderRadius: 18, padding: 16,
     borderWidth: 1, borderColor: '#F3F4F6',

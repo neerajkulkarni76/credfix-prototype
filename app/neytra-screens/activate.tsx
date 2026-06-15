@@ -121,9 +121,9 @@ export default function NeytraActivateScreen() {
 
     const p = permissions[index];
     const titles = {
-      phone: 'Allow CredFix to make and manage phone calls?',
-      mic: 'Set CredFix as default Caller ID & spam app?',
-      contacts: 'Allow CredFix to access your contacts?',
+      phone: 'Allow Credfix to make and manage phone calls?',
+      mic: 'Set Credfix as default Caller ID & spam app?',
+      contacts: 'Allow Credfix to access your contacts?',
     };
     const descs = {
       phone: 'This allows Neytra to manage incoming recovery calls on your behalf.',

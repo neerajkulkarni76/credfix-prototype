@@ -36,6 +36,7 @@ export default function RootLayout() {
       <Stack.Screen name="chat/new" />
       <Stack.Screen name="chat/settlement" />
       <Stack.Screen name="chat/legal" />
+      <Stack.Screen name="chat/score-improvement" />
       <Stack.Screen name="neytra-screens/activate" options={{ gestureEnabled: false }} />
       <Stack.Screen name="neytra-screens/index" />
       <Stack.Screen name="neytra-screens/history" />
