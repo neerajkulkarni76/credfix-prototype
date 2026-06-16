@@ -145,6 +145,21 @@ function buildScenes(name: string, q1: string, q2: string, q3: string): Scene[] 
 }
 
 // ── Video Player ──
+// Estimate total video duration from narrations (~130 words/min at 0.85 rate)
+function estimateDuration(scenes: Scene[]): number {
+  return scenes.reduce((sum, sc) => {
+    const words = sc.narration.split(/\s+/).length;
+    return sum + Math.max(words * 450, 3000) + 800; // narration + pause between scenes
+  }, 0);
+}
+
+function formatTime(ms: number): string {
+  const totalSec = Math.max(0, Math.ceil(ms / 1000));
+  const min = Math.floor(totalSec / 60);
+  const sec = totalSec % 60;
+  return `${min}:${sec.toString().padStart(2, '0')}`;
+}
+
 function VideoPlayer({ scenes, onComplete, onSkip }: { scenes: Scene[]; onComplete: () => void; onSkip: () => void }) {
   const [currentScene, setCurrentScene] = useState(0);
   const [muted, setMuted] = useState(false);
@@ -153,6 +168,10 @@ function VideoPlayer({ scenes, onComplete, onSkip }: { scenes: Scene[]; onComple
   const pausedRef = useRef(false);
   const currentRef = useRef(0);
   const doneRef = useRef(false);
+
+  const totalDuration = useRef(estimateDuration(scenes)).current;
+  const startTime = useRef(Date.now()).current;
+  const [remaining, setRemaining] = useState(totalDuration);
 
   const sceneFade = useRef(new Animated.Value(1)).current;
   const titleSlide = useRef(new Animated.Value(0)).current;
@@ -216,7 +235,15 @@ function VideoPlayer({ scenes, onComplete, onSkip }: { scenes: Scene[]; onComple
       }, mutedRef.current);
     }, 500);
 
-    return () => { Speech.stop(); };
+    // Countdown timer
+    const interval = setInterval(() => {
+      if (!pausedRef.current && !doneRef.current) {
+        const elapsed = Date.now() - startTime;
+        setRemaining(Math.max(0, totalDuration - elapsed));
+      }
+    }, 1000);
+
+    return () => { Speech.stop(); clearInterval(interval); };
   }, []);
 
   const toggleMute = () => {
@@ -302,6 +329,7 @@ function VideoPlayer({ scenes, onComplete, onSkip }: { scenes: Scene[]; onComple
               <View key={i} style={[pStyles.sceneDot, i === currentScene && pStyles.sceneDotActive, i < currentScene && pStyles.sceneDotDone]} />
             ))}
           </View>
+          <Text style={pStyles.timerText}>{formatTime(remaining)}</Text>
         </View>
       </View>
     </View>
@@ -438,7 +466,7 @@ export default function AnalysisScreen() {
 }
 
 const pStyles = StyleSheet.create({
-  container: { flex: 1, marginHorizontal: 16, borderRadius: 20, overflow: 'hidden', backgroundColor: '#000', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 20 },
+  container: { flex: 1, width: width - 32, alignSelf: 'center', borderRadius: 20, overflow: 'hidden', backgroundColor: '#000', shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 20 },
   overlayBtns: { position: 'absolute', top: 16, right: 16, zIndex: 20, flexDirection: 'row', gap: 8 },
   overlayBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' },
   overlayBtnSkip: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingHorizontal: 16, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.5)' },
@@ -465,6 +493,7 @@ const pStyles = StyleSheet.create({
   sceneDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)' },
   sceneDotActive: { backgroundColor: Colors.primary, width: 14, borderRadius: 3 },
   sceneDotDone: { backgroundColor: 'rgba(255,255,255,0.4)' },
+  timerText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontVariant: ['tabular-nums'], marginLeft: 8 },
 });
 
 const rStyles = StyleSheet.create({

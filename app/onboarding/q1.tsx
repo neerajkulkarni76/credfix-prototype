@@ -12,7 +12,7 @@ import * as Haptics from 'expo-haptics';
 const { width } = Dimensions.get('window');
 
 const options = [
-  { label: 'Stop the calls & harassment', icon: 'phone-square', type: 'neytra' },
+  { label: 'Stop the Call Harassment', icon: 'phone-square', type: 'neytra' },
   { label: 'Need legal support', icon: 'balance-scale', type: 'legal' },
   { label: 'Settle or reduce a loan', icon: 'handshake-o', type: 'resolution' },
 ];

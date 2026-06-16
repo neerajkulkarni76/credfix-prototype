@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center', marginBottom: 6 },
   subtitle: { fontSize: 14, color: Colors.textSecondary, textAlign: 'center', lineHeight: 21 },
   fields: { width: '100%' },
-  field: { marginBottom: 16 },
+  field: { marginBottom: 12 },
   fieldLabel: { fontSize: 13, color: Colors.textSecondary, marginBottom: 6, fontWeight: '500' },
   inputWrap: {
     flexDirection: 'row', alignItems: 'center',
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   footer: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 'auto', paddingTop: 16 },
   footerText: { fontSize: 12, color: Colors.textMuted, flex: 1, lineHeight: 17 },
   ctaContainer: {
-    paddingHorizontal: 24, paddingBottom: Platform.OS === 'ios' ? 16 : 24, paddingTop: 10,
+    paddingHorizontal: 24, paddingBottom: Platform.OS === 'ios' ? 8 : 12, paddingTop: 6,
     backgroundColor: Colors.white, borderTopWidth: 1, borderTopColor: '#F3F4F6',
   },
   cta: {

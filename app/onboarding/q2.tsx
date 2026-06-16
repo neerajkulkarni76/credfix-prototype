@@ -90,7 +90,7 @@ export default function Q2Screen() {
 
         {/* Muted loan card */}
         <Animated.View style={[styles.loanCard, { opacity: cardFade, transform: [{ translateY: cardSlide }] }]}>
-          <Text style={styles.loanCardLabel}>Let's start with the one with highest repayment delay</Text>
+          <Text style={styles.loanCardLabel}>As per the credit report, this loan has the highest delay</Text>
           <View style={styles.loanRow}>
             <View style={styles.loanIconWrap}>
               <FontAwesome name="bank" size={14} color={Colors.textSecondary} />
@@ -107,7 +107,7 @@ export default function Q2Screen() {
         </Animated.View>
 
         {/* Empathetic heading */}
-        <Text style={styles.title}>What was the primary reason{'\n'}for repayment delay?</Text>
+        <Text style={styles.title}>What's the primary reason for{'\n'}the missed payment?</Text>
 
         <Animated.Text style={[styles.subtitle, { opacity: reassureFade }]}>
           This happens to a lot of people.{'\n'}Knowing helps us find the right fix.

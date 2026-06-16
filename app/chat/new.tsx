@@ -136,7 +136,7 @@ export default function NewConversationScreen() {
       <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={() => { if (showChat) { setPendingTopic(null); setUserMessage(null) } else router.back() }} style={s.backBtn}>
+          <TouchableOpacity onPress={() => { if (showChat) { setPendingTopic(null); setUserMessage(null) } else router.replace('/(tabs)') }} style={s.backBtn}>
             <FontAwesome name="arrow-left" size={18} color={Colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>{showChat ? 'Select lender' : 'New conversation'}</Text>

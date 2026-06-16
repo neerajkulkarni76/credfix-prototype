@@ -82,7 +82,7 @@ export default function SignupScreen() {
             </Text>
             {!keyboardVisible && (
               <Text style={styles.subheading}>
-                We help you resolve loans, handle legal notices, and manage recovery calls — all in one place.
+                We help you resolve loans, handle legal notices, and manage recovery calls.{'\n'}All in one place.
               </Text>
             )}
           </Animated.View>
@@ -97,7 +97,7 @@ export default function SignupScreen() {
               <View style={styles.trustDivider} />
               <View style={styles.trustChip}>
                 <FontAwesome name="check-circle" size={12} color={Colors.ctaGreen} />
-                <Text style={styles.trustChipText}>Bank-grade Security</Text>
+                <Text style={styles.trustChipText}>10,000+ Happy Users</Text>
               </View>
               <View style={styles.trustDivider} />
               <View style={styles.trustChip}>
