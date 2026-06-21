@@ -73,8 +73,9 @@ type Scene = {
 };
 
 function buildScenes(name: string, q1: string, q2: string, q3: string): Scene[] {
-  const ctaLabel = q1.includes('calls') || q1.includes('harassment')
-    ? 'call protection' : q1.includes('legal') || q1.includes('Legal')
+  const q1L = q1.toLowerCase();
+  const ctaLabel = q1L.includes('call') || q1L.includes('harassment')
+    ? 'call protection' : q1L.includes('legal')
       ? 'legal support' : 'settlement plan';
 
   return [
@@ -417,9 +418,10 @@ export default function AnalysisScreen() {
   }, []);
 
   const getCta = () => {
-    if (q1Answer.includes('calls') || q1Answer.includes('harassment'))
+    const q1Lower = q1Answer.toLowerCase();
+    if (q1Lower.includes('call') || q1Lower.includes('harassment'))
       return { text: 'Activate call protection', type: 'neytra' };
-    if (q1Answer.includes('legal') || q1Answer.includes('Legal'))
+    if (q1Lower.includes('legal'))
       return { text: 'Get legal help now', type: 'legal' };
     return { text: 'Start your settlement', type: 'resolution' };
   };
